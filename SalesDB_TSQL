@@ -118,73 +118,84 @@ JOIN dbo.Products p
 -- Update Customers table with realistic names
 -- =========================================
 
--- Create temporary mapping table with real names
-;WITH RealNames AS (
-    SELECT 1 AS n, 'John' AS FirstName, 'Smith' AS LastName UNION ALL
-    SELECT 2, 'Emma', 'Johnson' UNION ALL
-    SELECT 3, 'Michael', 'Brown' UNION ALL
-    SELECT 4, 'Olivia', 'Williams' UNION ALL
-    SELECT 5, 'William', 'Jones' UNION ALL
-    SELECT 6, 'Sophia', 'Garcia' UNION ALL
-    SELECT 7, 'James', 'Miller' UNION ALL
-    SELECT 8, 'Isabella', 'Davis' UNION ALL
-    SELECT 9, 'Benjamin', 'Rodriguez' UNION ALL
-    SELECT 10, 'Mia', 'Martinez' UNION ALL
-    SELECT 11, 'Alexander', 'Hernandez' UNION ALL
-    SELECT 12, 'Charlotte', 'Lopez' UNION ALL
-    SELECT 13, 'Daniel', 'Gonzalez' UNION ALL
-    SELECT 14, 'Amelia', 'Wilson' UNION ALL
-    SELECT 15, 'Matthew', 'Anderson' UNION ALL
-    SELECT 16, 'Liam', 'Taylor' UNION ALL
-    SELECT 17, 'Olivia', 'Moore' UNION ALL
-    SELECT 18, 'Noah', 'Jackson' UNION ALL
-    SELECT 19, 'Ava', 'Martin' UNION ALL
-    SELECT 20, 'Ethan', 'Lee' UNION ALL
-    SELECT 21, 'Sophia', 'Harris' UNION ALL
-    SELECT 22, 'Mason', 'Clark' UNION ALL
-    SELECT 23, 'Isabella', 'Lewis' UNION ALL
-    SELECT 24, 'Logan', 'Walker' UNION ALL
-    SELECT 25, 'Emma', 'Hall' UNION ALL
-    SELECT 26, 'Lucas', 'Allen' UNION ALL
-    SELECT 27, 'Chloe', 'Young' UNION ALL
-    SELECT 28, 'Liam', 'King' UNION ALL
-    SELECT 29, 'Sophia', 'Wright' UNION ALL
-    SELECT 30, 'Oliver', 'Scott' UNION ALL
-    SELECT 31, 'Amelia', 'Green' UNION ALL
-    SELECT 32, 'Ethan', 'Adams' UNION ALL
-    SELECT 33, 'Ava', 'Baker' UNION ALL
-    SELECT 34, 'Noah', 'Nelson' UNION ALL
-    SELECT 35, 'Mia', 'Mitchell' UNION ALL
-    SELECT 36, 'Daniel', 'Perez' UNION ALL
-    SELECT 37, 'Ella', 'Robinson' UNION ALL
-    SELECT 38, 'Jacob', 'Walker' UNION ALL
-    SELECT 39, 'Harper', 'Young' UNION ALL
-    SELECT 40, 'Henry', 'Allen' UNION ALL
-    SELECT 41, 'Lily', 'Sanchez' UNION ALL
-    SELECT 42, 'Sebastian', 'Wright' UNION ALL
-    SELECT 43, 'Avery', 'King' UNION ALL
-    SELECT 44, 'Owen', 'Scott' UNION ALL
-    SELECT 45, 'Sofia', 'Torres' UNION ALL
-    SELECT 46, 'Jackson', 'Nguyen' UNION ALL
-    SELECT 47, 'Scarlett', 'Hill' UNION ALL
-    SELECT 48, 'Leo', 'Flores' UNION ALL
-    SELECT 49, 'Aria', 'Green' UNION ALL
-    SELECT 50, 'Gabriel', 'Adams'
-)
+-- =========================================
+-- 1. Create a temporary table with real names
+-- =========================================
+CREATE TABLE #RealNames (
+    ID INT PRIMARY KEY,
+    FirstName NVARCHAR(50),
+    LastName NVARCHAR(50)
+);
 
--- Update existing Customers table
-;WITH CustomersWithRow AS (
-    SELECT 
-        CustomerID,
-        ROW_NUMBER() OVER (ORDER BY CustomerID) AS rn
-    FROM dbo.Customers
-)
+INSERT INTO #RealNames (ID, FirstName, LastName)
+VALUES
+(1,'John','Smith'),
+(2,'Emma','Johnson'),
+(3,'Michael','Brown'),
+(4,'Olivia','Williams'),
+(5,'William','Jones'),
+(6,'Sophia','Garcia'),
+(7,'James','Miller'),
+(8,'Isabella','Davis'),
+(9,'Benjamin','Rodriguez'),
+(10,'Mia','Martinez'),
+(11,'Alexander','Hernandez'),
+(12,'Charlotte','Lopez'),
+(13,'Daniel','Gonzalez'),
+(14,'Amelia','Wilson'),
+(15,'Matthew','Anderson'),
+(16,'Liam','Taylor'),
+(17,'Olivia','Moore'),
+(18,'Noah','Jackson'),
+(19,'Ava','Martin'),
+(20,'Ethan','Lee'),
+(21,'Sophia','Harris'),
+(22,'Mason','Clark'),
+(23,'Isabella','Lewis'),
+(24,'Logan','Walker'),
+(25,'Emma','Hall'),
+(26,'Lucas','Allen'),
+(27,'Chloe','Young'),
+(28,'Liam','King'),
+(29,'Sophia','Wright'),
+(30,'Oliver','Scott'),
+(31,'Amelia','Green'),
+(32,'Ethan','Adams'),
+(33,'Ava','Baker'),
+(34,'Noah','Nelson'),
+(35,'Mia','Mitchell'),
+(36,'Daniel','Perez'),
+(37,'Ella','Robinson'),
+(38,'Jacob','Walker'),
+(39,'Harper','Young'),
+(40,'Henry','Allen'),
+(41,'Lily','Sanchez'),
+(42,'Sebastian','Wright'),
+(43,'Avery','King'),
+(44,'Owen','Scott'),
+(45,'Sofia','Torres'),
+(46,'Jackson','Nguyen'),
+(47,'Scarlett','Hill'),
+(48,'Leo','Flores'),
+(49,'Aria','Green'),
+(50,'Gabriel','Adams');
+
+-- =========================================
+-- 2. Update Customers using JOIN
+-- =========================================
+-- Assume CustomerID 1..50 match the generated rows
 UPDATE C
 SET 
     C.FirstName = R.FirstName,
     C.LastName = R.LastName,
     C.Email = LOWER(R.FirstName + '.' + R.LastName + '@example.com')
-FROM CustomersWithRow C
-INNER JOIN RealNames R
-    ON C.rn = R.n;
+FROM dbo.Customers C
+INNER JOIN #RealNames R
+    ON C.CustomerID = R.ID;
+
+-- =========================================
+-- 3. Cleanup temporary table
+-- =========================================
+DROP TABLE #RealNames;
+
 
