@@ -1,123 +1,115 @@
--- =========================================
--- 1. Create Customers Table
--- =========================================
-CREATE TABLE Customers (
-    CustomerID INT PRIMARY KEY,
+-- =====================================
+-- 1. Drop existing tables (optional)
+-- =====================================
+IF OBJECT_ID('dbo.Sales', 'U') IS NOT NULL DROP TABLE dbo.Sales;
+IF OBJECT_ID('dbo.Products', 'U') IS NOT NULL DROP TABLE dbo.Products;
+IF OBJECT_ID('dbo.Customers', 'U') IS NOT NULL DROP TABLE dbo.Customers;
+
+
+-- =====================================
+-- 2. Create Tables
+-- =====================================
+
+CREATE TABLE dbo.Customers (
+    CustomerID INT IDENTITY(1,1) PRIMARY KEY,
     FirstName NVARCHAR(50),
     LastName NVARCHAR(50),
     Email NVARCHAR(100),
     City NVARCHAR(50),
-    Country NVARCHAR(50)
+    Country NVARCHAR(50),
+    CreatedDate DATETIME2 DEFAULT SYSUTCDATETIME()
 );
 
--- Insert 35 Customers across USA, Canada, Others
-INSERT INTO Customers (CustomerID, FirstName, LastName, Email, City, Country)
-VALUES
--- USA
-(1,'John','Smith','john.smith@example.com','New York','USA'),
-(2,'Emma','Johnson','emma.johnson@example.com','Los Angeles','USA'),
-(3,'Michael','Brown','michael.brown@example.com','Chicago','USA'),
-(4,'Olivia','Williams','olivia.williams@example.com','Houston','USA'),
-(5,'William','Jones','william.jones@example.com','Phoenix','USA'),
-(6,'Sophia','Garcia','sophia.garcia@example.com','Philadelphia','USA'),
-(7,'James','Miller','james.miller@example.com','San Antonio','USA'),
-(8,'Isabella','Davis','isabella.davis@example.com','San Diego','USA'),
-(9,'Benjamin','Rodriguez','benjamin.rodriguez@example.com','Dallas','USA'),
-(10,'Mia','Martinez','mia.martinez@example.com','San Jose','USA'),
-(11,'Alexander','Hernandez','alexander.hernandez@example.com','Austin','USA'),
-(12,'Charlotte','Lopez','charlotte.lopez@example.com','Jacksonville','USA'),
-(13,'Daniel','Gonzalez','daniel.gonzalez@example.com','Fort Worth','USA'),
-(14,'Amelia','Wilson','amelia.wilson@example.com','Columbus','USA'),
-(15,'Matthew','Anderson','matthew.anderson@example.com','San Francisco','USA'),
-
--- Canada
-(16,'Liam','Taylor','liam.taylor@example.ca','Toronto','Canada'),
-(17,'Olivia','Moore','olivia.moore@example.ca','Vancouver','Canada'),
-(18,'Noah','Jackson','noah.jackson@example.ca','Montreal','Canada'),
-(19,'Ava','Martin','ava.martin@example.ca','Calgary','Canada'),
-(20,'Ethan','Lee','ethan.lee@example.ca','Ottawa','Canada'),
-(21,'Sophia','Harris','sophia.harris@example.ca','Edmonton','Canada'),
-(22,'Mason','Clark','mason.clark@example.ca','Winnipeg','Canada'),
-(23,'Isabella','Lewis','isabella.lewis@example.ca','Quebec City','Canada'),
-(24,'Logan','Walker','logan.walker@example.ca','Hamilton','Canada'),
-(25,'Emma','Hall','emma.hall@example.ca','Kitchener','Canada'),
-
--- Other Countries
-(26,'Lucas','Allen','lucas.allen@example.co.uk','London','UK'),
-(27,'Chloe','Young','chloe.young@example.co.uk','Manchester','UK'),
-(28,'Liam','King','liam.king@example.de','Berlin','Germany'),
-(29,'Sophia','Wright','sophia.wright@example.de','Munich','Germany'),
-(30,'Oliver','Scott','oliver.scott@example.au','Sydney','Australia'),
-(31,'Amelia','Green','amelia.green@example.au','Melbourne','Australia'),
-(32,'Ethan','Adams','ethan.adams@example.nz','Auckland','New Zealand'),
-(33,'Ava','Baker','ava.baker@example.nz','Wellington','New Zealand'),
-(34,'Noah','Nelson','noah.nelson@example.in','Mumbai','India'),
-(35,'Mia','Mitchell','mia.mitchell@example.in','Delhi','India');
-
--- =========================================
--- 2. Create Products Table
--- =========================================
-CREATE TABLE Products (
-    ProductID INT PRIMARY KEY,
+CREATE TABLE dbo.Products (
+    ProductID INT IDENTITY(1,1) PRIMARY KEY,
     ProductName NVARCHAR(100),
     Category NVARCHAR(50),
-    Price DECIMAL(10,2),
-    Stock INT
+    UnitPrice DECIMAL(10,2),
+    CreatedDate DATETIME2 DEFAULT SYSUTCDATETIME()
 );
 
-INSERT INTO Products (ProductID, ProductName, Category, Price, Stock)
-VALUES
-(1,'Laptop','Electronics',1200.00,50),
-(2,'Smartphone','Electronics',800.00,150),
-(3,'Tablet','Electronics',500.00,75),
-(4,'Desk Chair','Furniture',150.00,100),
-(5,'Coffee Table','Furniture',200.00,60),
-(6,'Pen Set','Stationery',15.00,500),
-(7,'Notebook','Stationery',10.00,300),
-(8,'Backpack','Accessories',80.00,120),
-(9,'Headphones','Electronics',120.00,90),
-(10,'Monitor','Electronics',250.00,70),
-(11,'Mouse','Electronics',40.00,200),
-(12,'Keyboard','Electronics',60.00,150),
-(13,'Lamp','Furniture',45.00,80),
-(14,'Water Bottle','Accessories',20.00,250),
-(15,'USB Cable','Electronics',10.00,500),
-(16,'Backpack Large','Accessories',100.00,90),
-(17,'Chair Cushion','Furniture',35.00,100),
-(18,'Planner','Stationery',25.00,200),
-(19,'Desk Organizer','Furniture',30.00,120),
-(20,'Earbuds','Electronics',75.00,150);
-
--- =========================================
--- 3. Create Sales Table
--- =========================================
-CREATE TABLE Sales (
-    SalesID INT IDENTITY(1,1) PRIMARY KEY,
-    CustomerID INT FOREIGN KEY REFERENCES Customers(CustomerID),
-    ProductID INT FOREIGN KEY REFERENCES Products(ProductID),
-    SaleDate DATETIME,
-    Quantity INT,
-    TotalAmount AS (Quantity * (SELECT Price FROM Products WHERE Products.ProductID = Sales.ProductID))
+CREATE TABLE dbo.Sales (
+    SalesID BIGINT IDENTITY(1,1) PRIMARY KEY,
+    CustomerID INT NOT NULL,
+    ProductID INT NOT NULL,
+    Quantity INT NOT NULL,
+    UnitPrice DECIMAL(10,2) NOT NULL,
+    TotalAmount AS (Quantity * UnitPrice) PERSISTED,
+    SalesDate DATETIME2 NOT NULL,
+    CONSTRAINT FK_Sales_Customer FOREIGN KEY (CustomerID) REFERENCES dbo.Customers(CustomerID),
+    CONSTRAINT FK_Sales_Product FOREIGN KEY (ProductID) REFERENCES dbo.Products(ProductID)
 );
 
--- =========================================
--- 4. Generate 2000 Sales Records
--- =========================================
--- We'll use CROSS JOIN with TOP and NEWID() to generate randomized records
-INSERT INTO Sales (CustomerID, ProductID, SaleDate, Quantity)
+
+-- =====================================
+-- 3. Seed 50 Customers
+-- =====================================
+;WITH numbers AS (
+    SELECT TOP (50) ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS n
+    FROM sys.objects
+)
+INSERT INTO dbo.Customers (FirstName, LastName, Email, City, Country)
 SELECT 
-    C.CustomerID,
-    P.ProductID,
-    DATEADD(DAY, ABS(CHECKSUM(NEWID())) % 365, '2025-01-01'), -- Random date in 2025
-    ABS(CHECKSUM(NEWID())) % 5 + 1 -- Random quantity 1-5
-FROM 
-    Customers C
-CROSS JOIN
-    Products P
-WHERE 
-    ABS(CHECKSUM(NEWID())) % 4 = 0 -- random sampling to reduce total rows
-;
+    CONCAT('Customer', n),
+    CONCAT('Last', n),
+    CONCAT('customer', n, '@example.com'),
+    CHOOSE((n % 5) + 1, 'Vancouver','Seattle','Toronto','Calgary','Portland'),
+    CHOOSE((n % 3) + 1, 'Canada','USA','Mexico')
+FROM numbers;
 
--- Repeat the insert multiple times to reach ~2000 rows
--- You can wrap the above INSERT in a loop or multiple runs until you reach 2000 records
 
+-- =====================================
+-- 4. Seed 30 Products
+-- =====================================
+INSERT INTO dbo.Products (ProductName, Category, UnitPrice)
+VALUES
+('Laptop Pro 15', 'Electronics', 1500),
+('Laptop Air 13', 'Electronics', 1200),
+('4K Monitor', 'Electronics', 400),
+('USB-C Dock', 'Accessories', 130),
+('Wireless Mouse', 'Accessories', 40),
+('Mechanical Keyboard', 'Accessories', 110),
+('Noise Cancelling Headphones', 'Audio', 300),
+('Bluetooth Speaker', 'Audio', 120),
+('Smartphone X', 'Electronics', 999),
+('Tablet Pro', 'Electronics', 850),
+('Webcam HD', 'Accessories', 70),
+('Portable SSD 1TB', 'Storage', 150),
+('Portable SSD 2TB', 'Storage', 250),
+('Cloud Backup Plan', 'Subscription', 10),
+('Software License Pro', 'Subscription', 25),
+('Charging Cable', 'Accessories', 15),
+('Power Adapter', 'Accessories', 45),
+('Ergo Chair', 'Furniture', 300),
+('Desk Lamp', 'Furniture', 90),
+('Office Desk', 'Furniture', 600),
+('VR Headset', 'Electronics', 499),
+('Graphic Tablet', 'Electronics', 299),
+('USB Hub 7-Port', 'Accessories', 55),
+('Tripod Stand', 'Accessories', 35),
+('Microphone Pro', 'Audio', 150),
+('Smartwatch', 'Electronics', 280),
+('Router AX6000', 'Networking', 350),
+('Mesh WiFi Node', 'Networking', 200),
+('Laptop Stand', 'Accessories', 50),
+('Noise Meter', 'Testing', 130);
+
+
+-- =====================================
+-- 5. Generate 5000 Sales Transactions
+-- =====================================
+;WITH nums AS (
+    SELECT TOP (5000)
+        ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS n
+    FROM sys.objects a CROSS JOIN sys.objects b
+)
+INSERT INTO dbo.Sales (CustomerID, ProductID, Quantity, UnitPrice, SalesDate)
+SELECT  
+    ABS(CHECKSUM(NEWID())) % 50 + 1,            -- Customer ID (1–50)
+    ABS(CHECKSUM(NEWID())) % 30 + 1,            -- Product ID (1–30)
+    ABS(CHECKSUM(NEWID())) % 5 + 1,             -- Quantity (1–5)
+    p.UnitPrice,                                -- Correct unit price
+    DATEADD(DAY, -ABS(CHECKSUM(NEWID())) % 365, SYSUTCDATETIME())
+FROM nums
+JOIN dbo.Products p
+    ON (ABS(CHECKSUM(NEWID())) % 30 + 1) = p.ProductID;
