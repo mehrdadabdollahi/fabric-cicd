@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/variables/1.0.0/schema.json",
+  "variables": [
+    {
+      "name": "WorkspaceID",
+      "note": "",
+      "type": "String",
+      "value": "7eeefc25-b6f6-4e61-a50b-7137451f9192"
+    },
+    {
+      "name": "SQLObjectID_Sales",
+      "note": "",
+      "type": "String",
+      "value": "14053e54-7dfa-4c4a-9280-1c13def25b28"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+table Sales
+	lineageTag: 88a53ec3-06ee-4459-9424-50cb83c88f67
+	sourceLineageTag: [dbo].[Sales]
+
+	column SalesID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 311ca901-fd6a-4633-9ff8-e264e1a05b41
+		sourceLineageTag: SalesID
+		summarizeBy: count
+		sourceColumn: SalesID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 0e06b342-f231-4fc6-b454-161baafc492f
+		sourceLineageTag: CustomerID
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 73d50585-3f8e-4745-a44c-8ab7e1cbfb7c
+		sourceLineageTag: ProductID
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 4f35209c-d034-4942-be50-3ecb821e4153
+		sourceLineageTag: Quantity
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitPrice
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 5b73d1f3-6c2c-4cfb-8735-fa2c94ee7ec2
+		sourceLineageTag: UnitPrice
+		summarizeBy: sum
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column TotalAmount
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: fa250520-d695-4a0b-a1de-6da359b7ab8b
+		sourceLineageTag: TotalAmount
+		summarizeBy: sum
+		sourceColumn: TotalAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SalesDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 7b144a1f-9698-481e-a977-7cbcb8896d46
+		sourceLineageTag: SalesDate
+		summarizeBy: none
+		sourceColumn: SalesDate
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Sales = entity
+		mode: directLake
+		source
+			entityName: Sales
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

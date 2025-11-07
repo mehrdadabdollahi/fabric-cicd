@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/variableLibrary/definition/valueSet/1.0.0/schema.json",
+  "name": "Prod",
+  "variableOverrides": [
+    {
+      "name": "SQLObjectID_Sales",
+      "value": "b3aee651-eae5-4d0d-a9ad-3ae41c14ad61"
+    },
+    {
+      "name": "WorkspaceID",
+      "value": "55b3393b-d011-41b8-b5e6-21b90f56d60f"
+    }
+  ]
+}

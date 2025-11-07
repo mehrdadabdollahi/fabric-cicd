@@ -1,0 +1,8 @@
+relationship 4535f4e6-4dd0-fbc0-84b8-b3ca09e11e55
+	fromColumn: Sales.CustomerID
+	toColumn: Customers.CustomerID
+
+relationship 115ae03c-a0ca-a607-70b2-07d92da25b05
+	fromColumn: Sales.ProductID
+	toColumn: Products.ProductID
+

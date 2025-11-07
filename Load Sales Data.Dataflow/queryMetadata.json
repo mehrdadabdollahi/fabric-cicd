@@ -1,0 +1,62 @@
+{
+  "formatVersion": "202502",
+  "computeEngineSettings": {},
+  "name": "Load Sales Data",
+  "queryGroups": [],
+  "documentLocale": "en-GB",
+  "queriesMetadata": {
+    "Products": {
+      "queryId": "fb2648d2-9e55-45f3-8bde-c3d75f77c8bf",
+      "queryName": "Products"
+    },
+    "Products_DataDestination": {
+      "queryId": "3df388d7-86b4-489f-8c09-9eb7010beea0",
+      "queryName": "Products_DataDestination",
+      "isHidden": true,
+      "loadEnabled": false
+    },
+    "WorkspaceID": {
+      "queryId": "cc0a1ef1-03a2-4249-85ce-ec57932c1bd7",
+      "queryName": "WorkspaceID",
+      "loadEnabled": false
+    },
+    "SQLObjectID": {
+      "queryId": "9a53a2e3-1da0-45e4-b2a8-474a93d80147",
+      "queryName": "SQLObjectID",
+      "loadEnabled": false
+    },
+    "Customers": {
+      "queryId": "ade63486-f754-4943-88ea-b3670a2fc083",
+      "queryName": "Customers"
+    },
+    "Sales": {
+      "queryId": "820d5cbc-9e02-47cf-ab29-fb5f0d743641",
+      "queryName": "Sales"
+    },
+    "Customers_DataDestination": {
+      "queryId": "e12f278a-f786-43d3-a68f-afce84e70015",
+      "queryName": "Customers_DataDestination",
+      "isHidden": true,
+      "loadEnabled": false
+    },
+    "Sales_DataDestination": {
+      "queryId": "5b30b417-488c-41bf-aa93-2c73fec16afb",
+      "queryName": "Sales_DataDestination",
+      "isHidden": true,
+      "loadEnabled": false
+    }
+  },
+  "connections": [
+    {
+      "path": "FabricSql",
+      "kind": "FabricSql",
+      "connectionId": "{\"ClusterId\":\"c872ee6e-2526-476a-a999-9ffcf0c8c79c\",\"DatasourceId\":\"8739e679-603d-4b45-8aaf-694cc1ae0f57\"}"
+    },
+    {
+      "path": "Warehouse",
+      "kind": "Warehouse",
+      "connectionId": "{\"ClusterId\":\"c872ee6e-2526-476a-a999-9ffcf0c8c79c\",\"DatasourceId\":\"2e1e35ce-fc88-4b05-bb11-d1628291a813\"}"
+    }
+  ],
+  "parametric": true
+}

@@ -1,0 +1,52 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "RefreshDataflow",
+        "typeProperties": {
+          "dataflowId": "49adde14-bab8-b906-4558-ad3b9f8aa7c3",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "notifyOption": "NoNotification",
+          "dataflowType": "DataflowFabric",
+          "parameters": {
+            "WorkspaceID": {
+              "value": {
+                "value": "@pipeline().libraryVariables.CICDVariablesLibrary_WorkspaceID",
+                "type": "Expression"
+              },
+              "type": "String"
+            },
+            "SQLObjectID": {
+              "value": {
+                "value": "@pipeline().libraryVariables.CICDVariablesLibrary_SQLObjectID_Sales",
+                "type": "Expression"
+              },
+              "type": "String"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Load Sales Data from SQL to DW",
+        "dependsOn": []
+      }
+    ],
+    "libraryVariables": {
+      "CICDVariablesLibrary_WorkspaceID": {
+        "type": "String",
+        "variableName": "WorkspaceID",
+        "libraryName": "CICDVariablesLibrary"
+      },
+      "CICDVariablesLibrary_SQLObjectID_Sales": {
+        "type": "String",
+        "variableName": "SQLObjectID_Sales",
+        "libraryName": "CICDVariablesLibrary"
+      }
+    }
+  }
+}
