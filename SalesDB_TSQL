@@ -117,7 +117,7 @@ JOIN dbo.Products p
 -- =========================================
 -- Update Customers table with realistic names
 -- =========================================
-
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- =========================================
 -- 1. Create a temporary table with real names
 -- =========================================
@@ -198,4 +198,28 @@ INNER JOIN #RealNames R
 -- =========================================
 DROP TABLE #RealNames;
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create SalesChannels table
+CREATE TABLE SalesChannels (
+    ChannelID INT PRIMARY KEY,
+    ChannelName NVARCHAR(50),
+    Description NVARCHAR(200)
+);
+
+-- Insert sample channels
+INSERT INTO SalesChannels (ChannelID, ChannelName, Description)
+VALUES
+(1, 'Online', 'Sales made through e-commerce website'),
+(2, 'Retail', 'In-store purchases at physical locations'),
+(3, 'Wholesale', 'Bulk sales to other businesses'),
+(4, 'Mobile App', 'Sales through mobile application'),
+(5, 'Call Center', 'Sales via customer support center');
+
+-- Add ChannelID column to Sales table
+ALTER TABLE Sales
+ADD ChannelID INT;
+
+-- Populate Sales.ChannelID randomly for PoC
+UPDATE Sales
+SET ChannelID = 1 + (ABS(CHECKSUM(NEWID())) % 5);
 
